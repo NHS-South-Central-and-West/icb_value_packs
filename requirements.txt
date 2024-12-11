@@ -340,7 +340,7 @@ pytz==2024.2
     # via
     #   3-local-report-usage (pyproject.toml)
     #   pandas
-pywin32==308
+pywin32==307
     # via
     #   3-local-report-usage (pyproject.toml)
     #   jupyter-core
