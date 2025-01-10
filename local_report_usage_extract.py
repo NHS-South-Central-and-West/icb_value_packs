@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 import numpy as np
-from local_report_usage import extract_data
+from package.extract_data import extract_data # import homemade function: 'from "package name"."python file" import "function"'
 
 # set seaborn theme
 
@@ -38,20 +38,7 @@ def extract_all_agg_traffic(file):
     workbook = load_workbook(filename=file, read_only=True, data_only=True) # open workbook
     worksheet = workbook[o_traf] # select specified worksheet
 
-    # nested function to lift data from specified range
-    def extract_data(first,last): #i.e. reference for first cell and last cell in table 
-        data_rows = []
-
-        for row in worksheet[first:last]:
-            data_cols = []
-            for cell in row:
-                data_cols.append(cell.value)
-            data_rows.append(data_cols)
-        df = pd.DataFrame(data_rows)
-        return df
-    # end of nested function
-    
-    agg_traffic = extract_data('A8','C12') # data range within worksheet
+    agg_traffic = extract_data(worksheet,'A8','C12') # data range within worksheet
     agg_traffic.columns = agg_traffic.iloc[0] # promote first row to headers
     agg_traffic = agg_traffic[1:].reset_index(drop=True) # drop the row that previously contained the headers
     agg_traffic['ICB'] = file.rsplit("\\", 1)[-1].split("-", 1)[0] # get the ICB from the file name. Needs double backslash since it's normally an escape character
@@ -71,21 +58,8 @@ def extract_all_last90_traffic(file):
 
     workbook = load_workbook(filename=file, read_only=True, data_only=True) # open workbook
     worksheet = workbook[o_traf] # select specified worksheet
-
-    # nested function to lift data from specified range
-    def extract_data(first,last): #i.e. reference for first cell and last cell in table 
-        data_rows = []
-
-        for row in worksheet[first:last]:
-            data_cols = []
-            for cell in row:
-                data_cols.append(cell.value)
-            data_rows.append(data_cols)
-        df = pd.DataFrame(data_rows)
-        return df
-    # end of nested function
     
-    last90_traffic = extract_data('A16','C105') # data range within worksheet
+    last90_traffic = extract_data(worksheet,'A16','C105') # data range within worksheet
     last90_traffic.columns = last90_traffic.iloc[0] # promote first row to headers
     last90_traffic = last90_traffic[1:].reset_index(drop=True) # drop the row that previously contained the headers
     last90_traffic['ICB'] = file.rsplit("\\", 1)[-1].split("-", 1)[0] # get the ICB from the file name. Needs double backslash since it's normally an escape character
@@ -112,21 +86,8 @@ def extract_all_popular_content(file):
         if all(worksheet[f'{col}{row}'].value is None for col in 'ABCD'):
             break
         end_row = row
-    
-        # nested function to lift data from specified range
-    def extract_data(first,last): #i.e. reference for first cell and last cell in table 
-        data_rows = []
 
-        for row in worksheet[first:last]:
-            data_cols = []
-            for cell in row:
-                data_cols.append(cell.value)
-            data_rows.append(data_cols)
-        df = pd.DataFrame(data_rows)
-        return df
-    # end of nested function
-
-    popular_content = extract_data(f'{start_col}{start_row}',f'{end_col}{end_row}') # extract from dynamic data range
+    popular_content = extract_data(worksheet,f'{start_col}{start_row}',f'{end_col}{end_row}') # extract from dynamic data range
     popular_content.columns = popular_content.iloc[0] # promote first row to headers
     popular_content = popular_content[1:].reset_index(drop=True) # drop the row that previously contained the headers
     popular_content['ICB'] = file.rsplit("\\", 1)[-1].split("-", 1)[0] # get the ICB from the file name. Needs double backslash since it's normally an escape character
@@ -141,21 +102,8 @@ def extract_all_usage_by_device(file):
 
     workbook = load_workbook(filename=file, read_only=True, data_only=True) # open workbook
     worksheet = workbook[use_dev] # select specified worksheet
-
-    # nested function to lift data from specified range
-    def extract_data(first,last): #i.e. reference for first cell and last cell in table 
-        data_rows = []
-
-        for row in worksheet[first:last]:
-            data_cols = []
-            for cell in row:
-                data_cols.append(cell.value)
-            data_rows.append(data_cols)
-        df = pd.DataFrame(data_rows)
-        return df
-    # end of nested function
     
-    usage_by_device = extract_data('A6','F95') # data range within worksheet
+    usage_by_device = extract_data(worksheet,'A6','F95') # data range within worksheet
     usage_by_device.columns = usage_by_device.iloc[0] # promote first row to headers
     usage_by_device = usage_by_device[1:].reset_index(drop=True) # drop the row that previously contained the headers
     usage_by_device['ICB'] = file.rsplit("\\", 1)[-1].split("-", 1)[0] # get the ICB from the file name. Needs double backslash since it's normally an escape character
@@ -170,21 +118,8 @@ def extract_all_usage_by_time(file):
 
     workbook = load_workbook(filename=file, read_only=True, data_only=True) # open workbook
     worksheet = workbook[use_time] # select specified worksheet
-
-    # nested function to lift data from specified range
-    def extract_data(first,last): #i.e. reference for first cell and last cell in table 
-        data_rows = []
-
-        for row in worksheet[first:last]:
-            data_cols = []
-            for cell in row:
-                data_cols.append(cell.value)
-            data_rows.append(data_cols)
-        df = pd.DataFrame(data_rows)
-        return df
-    # end of nested function
     
-    usage_by_time = extract_data('A7','D175') # data range within worksheet
+    usage_by_time = extract_data(worksheet,'A7','D175') # data range within worksheet
     usage_by_time.columns = usage_by_time.iloc[0] # promote first row to headers
     usage_by_time = usage_by_time[1:].reset_index(drop=True) # drop the row that previously contained the headers
     usage_by_time['ICB'] = file.rsplit("\\", 1)[-1].split("-", 1)[0] # get the ICB from the file name. Needs double backslash since it's normally an escape character
