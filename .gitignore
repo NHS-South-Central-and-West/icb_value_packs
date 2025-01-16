@@ -9,5 +9,8 @@ wheels/
 # Virtual environments
 .venv
 
-# Powerpoint version output
+# IO
 ppt/
+output/
+latest_data/
+past_data/
