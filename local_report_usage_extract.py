@@ -177,36 +177,50 @@ def last90_chart(icb):
     df.set_index('Date', inplace=True)
 
     # Set up the figure and axes
-    fig, ax1 = plt.subplots(figsize=(12, 6))
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10)) #, sharex=True
 
-    # Bar plot for Unique viewers
-    ax1.bar(df.index, df['Unique viewers'], color='#1C355E', label='Unique viewers')
+    # Bar plot for Unique viewers (Top subplot)
+    ax1.bar(                                     
+        df.index, 
+        df['Unique viewers'], 
+        color='#1C355E', 
+        label='Unique viewers',
+        alpha=0.8
+    )
+    ax1.set_ylabel('Unique viewers', color='#1C355E')
+    ax1.tick_params(axis='y', labelcolor='#1C355E')
+    ax1.set_title(f'Site visits and unique viewers for {icb} ICB')
 
-    # Format the x-axis to show dates properly
     ax1.xaxis.set_major_locator(mdates.DayLocator())  # Set major locator for each day
-    ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))  # Format to show the date as 'YYYY-MM-DD'
-    ax1.set_ylabel('Unique viewers', color='#1C355E' )
-    ax1.tick_params(axis='y')
-
-    # Rotate x-ticks and set every 7th date as a tick mark
+    ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))  # Format dates
     ax1.set_xticks(df.index[::7])  # Set x-ticks to every 7th date
-    ax1.set_xticklabels(df.index[::7].strftime('%Y-%m-%d'), rotation=90)  # Format x-tick labels
+    ax1.set_xticklabels(df.index[::7].strftime('%Y-%m-%d'), rotation=90)
 
-    ax2 = ax1.twinx()  # Set up secondary y-axis
+    # Line plot for Site visits (Bottom subplot)
+    ax2.bar(
+        df.index, 
+        df['Site visits'], 
+        color='#AE2573', 
+        label='Site visits', 
+        alpha=0.8
+    )
+    ax2.set_ylabel('Site visits', color='#AE2573')
+    ax2.tick_params(axis='y', labelcolor='#AE2573')
 
-    ax2.plot(df.index, df['Site visits'], color='#AE2573', label='Site visits')
-    # ax2.fill_between(df.index, df['Site visits'], color='#AE2573', alpha=0.3)
-    ax2.set_ylabel('Site visits', color= '#AE2573')
-    ax2.tick_params(axis='y')
+    ax2.xaxis.set_major_locator(mdates.DayLocator())  # Set major locator for each day
+    ax2.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))  # Format dates
+    ax2.set_xticks(df.index[::7])  # Set x-ticks to every 7th date
+    ax2.set_xticklabels(df.index[::7].strftime('%Y-%m-%d'), rotation=90)
 
+    # Adjust layout to prevent overlap
+    plt.tight_layout()
 
-    plt.title(f'Site visits and unique viewers for {icb} ICB')
-    plt.grid(False)
-
+    # Save the figure
     directory = './output'
     filename = f'{icb}_last90_activity.png'
     plt.savefig(f'{directory}/{filename}', bbox_inches='tight', pad_inches=0.01)
 
+    # Close the figure to free memory
     plt.close()
 
 last90_chart('BOB')
