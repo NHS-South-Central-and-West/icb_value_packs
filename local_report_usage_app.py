@@ -67,7 +67,14 @@ def main():
 
     t1.image('images/SCW-Logo-WHITE.png', width = 120)
     t2.title("Value Packs: Local Report Usage")
-    t2.markdown("**e-mail:** scwcsu.analytics.specialist@nhs.net")
+
+    # contact details
+    c = st.columns(1)[0]
+    c.markdown("**Product Owner:** Hazera Forth hazera.forth@nhs.net | **Technical Queries:** scwcsu.analytics.specialist@nhs.net")
+
+        # create some space between the contact details and the first chart:
+
+    st.markdown("<div style='margin-top: 30px;'></div>", unsafe_allow_html=True)
 
     with st.sidebar:
         st.header("Select ICB")
@@ -102,7 +109,7 @@ def main():
             tooltip=['Date:T', 'Unique viewers:Q']
         ).properties(
             title=f'Site visits and unique viewers for {selected_icb} ICB',
-            width=1000,
+            width=1380,
             height=200
         )
 
@@ -115,7 +122,7 @@ def main():
             y=alt.Y('Site visits:Q', axis=alt.Axis(title='Site visits', titleColor='#AE2573')),
             tooltip=['Date:T', 'Site visits:Q']
         ).properties(
-            width=1000,
+            width=1380,
             height=200
         )
 
@@ -134,101 +141,28 @@ def main():
         # display the chart
         st.altair_chart(last90_chart, use_container_width= False)
 
-    tab1 = st.columns(1)[0]
+    tab1, tab2 = st.columns((0.5,1))
 
     with tab1:
-        data = df_all_agg_traffic_filtered.reset_index(drop=True).values
-        columns = df_all_agg_traffic_filtered.reset_index(drop=True).columns
-
-        fig, ax = plt.subplots(figsize=(4, 2))
-        ax.axis('off')
-
-        table = ax.table(cellText=data,
-                        colLabels=columns,
-                        loc='center', cellLoc='center')
-        table.auto_set_font_size(False)
-        table.set_fontsize(8)
-        table.auto_set_column_width(col=list(range(len(columns))))
-        table.scale(1, 1)
-
-        for (row, col), cell in table.get_celld().items():
-            if row == 0:  # Header row
-                cell.set_facecolor('#1C355E')  # SCW dark blue
-                cell.set_text_props(color='#FFFFFF')  # White text
-
-        #fig.tight_layout(rect=[0,0,1,0.75])
-        fig.suptitle("Summary Actvivity Table", y=0.85, fontsize= 10)
-        st.pyplot(fig, use_container_width= False)
-
-    tab2 = st.columns(1)[0]
+        st.subheader("Activity Summary", divider="grey")
+        st.write(df_all_agg_traffic_filtered.drop(columns=["ICB"]).reset_index(drop=True))
+ 
     with tab2:
-        from matplotlib.cm import ScalarMappable
-        from matplotlib.colors import Normalize, to_rgba
 
-        def calculate_brightness(rgba_color):
-            r, g, b, _ = rgba_color  # Extract RGB components
-            brightness = 0.2126 * r + 0.7152 * g + 0.0722 * b
-            return brightness
-        
-        df_all_popular_content_filtered.fillna('-', inplace=True)
-        df_all_popular_content_filtered.rename(columns={'Type (Click to view)': 'Type'}, inplace=True)
-
-        # Define columns for conditional formatting
         columns_to_format = ["Last 7 days unique viewers", "Last 7 days visits"]
+        df_all_popular_content_display = df_all_popular_content_filtered.drop(columns=["ICB"])
 
-        # Normalize values for color gradient
-        norm = Normalize(vmin=df_all_popular_content_filtered[columns_to_format].min().min(), 
-                         vmax=df_all_popular_content_filtered[columns_to_format].max().max())
-        cmap = plt.cm.YlGnBu  # Choose a colormap
+        def pretty_table(styler):
+            #styler.hide()                   # doesn't seem to work in Streamlit
+            # styler.hide(subset=["ICB"], axis="columns")
+            styler.background_gradient(axis=None, 
+                                       vmin=df_all_popular_content_display[columns_to_format].min().min(), 
+                                       vmax=df_all_popular_content_display[columns_to_format].max().max(),
+                                       cmap="YlGnBu")
+            return styler
 
-        # Calculate figure size based on DataFrame size
-        num_rows, num_columns = df_all_popular_content_filtered.shape
-        fig_width = max(8, num_columns * 1.2)  # Minimum width of 8, scale with columns
-        fig_height = max(4, num_rows * 0.25)   # Minimum height of 4, scale with rows
-
-        # Create figure and axis for table
-        fig2, ax2 = plt.subplots(figsize=(fig_width, fig_height))
-        ax2.axis('off')
-
-        # Create the table
-        table2 = ax2.table(cellText=df_all_popular_content_filtered.values, 
-                          colLabels=df_all_popular_content_filtered.columns, 
-                          loc='center', 
-                          cellLoc='center'
-                          )
-        table2.auto_set_font_size(False)
-        table2.set_fontsize(12)
-        table2.auto_set_column_width(col=list(range(len(df_all_popular_content_filtered.columns))))
-        table2.scale(1.2, 1.2)
-
-        # Apply colour gradient to specific columns
-        for (row, col), cell2 in table2.get_celld().items():
-            if row > 0:  # Skip the header row
-                column_name = df_all_popular_content_filtered.columns[col]
-                if column_name in columns_to_format:
-                    try:
-                        # Get the value and map it to the coloyr range
-                        value = df_all_popular_content_filtered.iloc[row - 1, col]
-                        if isinstance(value, (int, float)):  # Ensure value is numeric
-                            color = cmap(norm(value))  # Get RGBA colour
-                            cell2.set_facecolor(color)
-
-                            # Adjust text colour based on brightness
-                            brightness = calculate_brightness(to_rgba(color))
-                            text_color = '#FFFFFF' if brightness < 0.5 else '#000000'
-                            cell2.set_text_props(color=text_color)
-                    except Exception:
-                        pass  # handle non-numeric cells
-
-        # Customize header row
-        for (row, col), cell2 in table2.get_celld().items():
-            if row == 0:  # Header row
-                cell2.set_facecolor('#1C355E')  # SCW dark blue
-                cell2.set_text_props(color='#FFFFFF')  # White text
-
-        fig2.suptitle('Popular Content')
-
-        st.pyplot(fig2, use_container_width= False)
+        st.subheader("Popular content", divider="grey")
+        st.write(df_all_popular_content_display.reset_index(drop=True).style.pipe(pretty_table))
 
 
 if __name__ == "__main__":
