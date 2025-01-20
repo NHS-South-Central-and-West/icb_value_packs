@@ -5,10 +5,10 @@ import pandas as pd
 from datetime import date
 from package.extract_data import extract_data # import homemade function: 'from "package name"."python file" import "function"'
 
-
 ####################
 ### Process Data ###
 ####################
+
 
 # specify folder containing data
 path = './latest_data'
@@ -25,12 +25,12 @@ use_time = 'Usage by time'
 working_data_dir = './working_data'
 date_today = date.today().strftime('%Y-%m-%d')
 
-# # clear out the working data folder  :::: might be better to keep historic files for longer view ::::
+# # clear out the working data folder ::: Might change this, if I want to consolidate data :::
 
-# for file in os.listdir(working_data_dir):
-#     file_path = os.path.join(working_data_dir,file)
-#     if os.path.isfile(file_path) or os.path.islink(file_path): # remove files and symbolic links
-#         os.unlink(file_path)
+for file in os.listdir(working_data_dir):
+    file_path = os.path.join(working_data_dir,file)
+    if os.path.isfile(file_path) or os.path.islink(file_path): # remove files and symbolic links
+        os.unlink(file_path)
 
 ### EXTRACT ALL AGGREGATE DATA FROM THE OVERALL TRAFFIC WORKSHEET ###
 
@@ -53,7 +53,7 @@ def extract_all_agg_traffic(file):
 
 all_agg_traffic = pd.concat([extract_all_agg_traffic(file) for file in file_list], ignore_index=True)
 
-all_agg_traffic.to_csv(f'{working_data_dir}/all_agg_traffic_{date_today}.csv')
+all_agg_traffic.to_csv(f'{working_data_dir}/all_agg_traffic_{date_today}.csv', index= False)
 
 ### EXTRACT ALL TRAFFIC IN LAST 90 DAYS FROM THE OVERALL TRAFFIC WORKSHEET ###
 
@@ -71,7 +71,7 @@ def extract_all_last90_traffic(file):
 
 all_last90_traffic = pd.concat([extract_all_last90_traffic(file) for file in file_list], ignore_index=True)
 
-all_last90_traffic.to_csv(f'{working_data_dir}/all_last90_traffic_{date_today}.csv')
+all_last90_traffic.to_csv(f'{working_data_dir}/all_last90_traffic_{date_today}.csv', index= False)
 
 ### EXTRACT ALL HIGH TRAFFIC CONTENT IN LAST 7 DAYS FROM THE POPULAR CONTENT WORKSHEET ###
 
@@ -101,7 +101,9 @@ def extract_all_popular_content(file):
 
 all_popular_content = pd.concat([extract_all_popular_content(file) for file in file_list], ignore_index=True)
 
-all_popular_content.to_csv(f'{working_data_dir}/all_popular_content_{date_today}.csv')
+all_popular_content.rename(columns={"Type (Click to view)": "Type"},inplace=True)
+
+all_popular_content.to_csv(f'{working_data_dir}/all_popular_content_{date_today}.csv', index= False)
 
 ### EXTRACT ALL USAGE BY DEVICE FROM THE USAGE BY DEVICE WORKSHEET ###
 
@@ -118,6 +120,7 @@ def extract_all_usage_by_device(file):
     return usage_by_device
 
 all_usage_by_device = pd.concat([extract_all_usage_by_device(file) for file in file_list], ignore_index=True)
+all_usage_by_device.to_csv(f'{working_data_dir}/all_usage_by_devide_{date_today}.csv', index= False)
 
 ### EXTRACT ALL USAGE BY TIME FROM THE USAGE BY TIME WORKSHEET ###
 
@@ -135,4 +138,4 @@ def extract_all_usage_by_time(file):
 
 all_usage_by_time = pd.concat([extract_all_usage_by_time(file) for file in file_list], ignore_index=True)
 
-all_usage_by_time.to_csv(f'{working_data_dir}/all_usage_by_time_{date_today}.csv')
+all_usage_by_time.to_csv(f'{working_data_dir}/all_usage_by_time_{date_today}.csv', index= False)
