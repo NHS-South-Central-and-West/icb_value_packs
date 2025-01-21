@@ -3,7 +3,7 @@ import os
 import glob
 import pandas as pd
 from datetime import date
-from package.extract_data import extract_data # import homemade function: 'from "package name"."python file" import "function"'
+# from package.extract_data import extract_data # import homemade function: 'from "package name"."python file" import "function"'
 
 ####################
 ### Process Data ###
@@ -36,6 +36,17 @@ for file in os.listdir(working_data_dir):
 
 def extract_all_agg_traffic(file):
 
+    def extract_data(worksheet,first,last): #i.e. reference for first cell and last cell in table 
+        data_rows = []
+
+        for row in worksheet[first:last]:
+            data_cols = []
+            for cell in row:
+                data_cols.append(cell.value)
+            data_rows.append(data_cols)
+            df = pd.DataFrame(data_rows)
+            return df
+
     workbook = load_workbook(filename=file, read_only=True, data_only=True) # open workbook
     worksheet = workbook[o_traf] # select specified worksheet
 
@@ -59,6 +70,17 @@ all_agg_traffic.to_csv(f'{working_data_dir}/all_agg_traffic_{date_today}.csv', i
 
 def extract_all_last90_traffic(file):
 
+    def extract_data(worksheet,first,last): #i.e. reference for first cell and last cell in table 
+        data_rows = []
+
+        for row in worksheet[first:last]:
+            data_cols = []
+            for cell in row:
+                data_cols.append(cell.value)
+            data_rows.append(data_cols)
+        df = pd.DataFrame(data_rows)
+        return df
+
     workbook = load_workbook(filename=file, read_only=True, data_only=True) # open workbook
     worksheet = workbook[o_traf] # select specified worksheet
     
@@ -76,6 +98,17 @@ all_last90_traffic.to_csv(f'{working_data_dir}/all_last90_traffic_{date_today}.c
 ### EXTRACT ALL HIGH TRAFFIC CONTENT IN LAST 7 DAYS FROM THE POPULAR CONTENT WORKSHEET ###
 
 def extract_all_popular_content(file):
+
+    def extract_data(worksheet,first,last): #i.e. reference for first cell and last cell in table 
+        data_rows = []
+
+        for row in worksheet[first:last]:
+            data_cols = []
+            for cell in row:
+                data_cols.append(cell.value)
+            data_rows.append(data_cols)
+        df = pd.DataFrame(data_rows)
+        return df
 
     workbook = load_workbook(filename=file, read_only=True, data_only=True) # open workbook
     worksheet = workbook[pop_cont] # select specified worksheet
@@ -109,6 +142,17 @@ all_popular_content.to_csv(f'{working_data_dir}/all_popular_content_{date_today}
 
 def extract_all_usage_by_device(file):
 
+    def extract_data(worksheet,first,last): #i.e. reference for first cell and last cell in table 
+        data_rows = []
+
+        for row in worksheet[first:last]:
+            data_cols = []
+            for cell in row:
+                data_cols.append(cell.value)
+            data_rows.append(data_cols)
+        df = pd.DataFrame(data_rows)
+        return df
+
     workbook = load_workbook(filename=file, read_only=True, data_only=True) # open workbook
     worksheet = workbook[use_dev] # select specified worksheet
     
@@ -125,6 +169,17 @@ all_usage_by_device.to_csv(f'{working_data_dir}/all_usage_by_devide_{date_today}
 ### EXTRACT ALL USAGE BY TIME FROM THE USAGE BY TIME WORKSHEET ###
 
 def extract_all_usage_by_time(file):
+
+    def extract_data(worksheet,first,last): #i.e. reference for first cell and last cell in table 
+        data_rows = []
+
+        for row in worksheet[first:last]:
+            data_cols = []
+            for cell in row:
+                data_cols.append(cell.value)
+            data_rows.append(data_cols)
+        df = pd.DataFrame(data_rows)
+        return df
 
     workbook = load_workbook(filename=file, read_only=True, data_only=True) # open workbook
     worksheet = workbook[use_time] # select specified worksheet
