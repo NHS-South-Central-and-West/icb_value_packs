@@ -164,7 +164,7 @@ def extract_all_usage_by_device(file):
     return usage_by_device
 
 all_usage_by_device = pd.concat([extract_all_usage_by_device(file) for file in file_list], ignore_index=True)
-all_usage_by_device.to_csv(f'{working_data_dir}/all_usage_by_devide_{date_today}.csv', index= False)
+all_usage_by_device.to_csv(f'{working_data_dir}/all_usage_by_device_{date_today}.csv', index= False)
 
 ### EXTRACT ALL USAGE BY TIME FROM THE USAGE BY TIME WORKSHEET ###
 
